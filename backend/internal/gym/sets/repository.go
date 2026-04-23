@@ -16,7 +16,7 @@ func NewSetRepository(pool *pgxpool.Pool) *SetRepository {
 	return &SetRepository{pool: pool}
 }
 
-func (r *SetRepository) GetByID(ctx context.Context, id uuid.UUID) (*domain.Set, error) {
+func (r *SetRepository) GetSetByID(ctx context.Context, id uuid.UUID) (*domain.Set, error) {
 	row := r.pool.QueryRow(ctx,
 		`SELECT id, session_exercise_id, reps, weight, order_num FROM sets WHERE id = $1`, id)
 
@@ -27,7 +27,7 @@ func (r *SetRepository) GetByID(ctx context.Context, id uuid.UUID) (*domain.Set,
 	return s, nil
 }
 
-func (r *SetRepository) ListBySessionExerciseID(ctx context.Context, sessionExerciseID uuid.UUID) ([]*domain.Set, error) {
+func (r *SetRepository) ListSetsBySessionExerciseID(ctx context.Context, sessionExerciseID uuid.UUID) ([]*domain.Set, error) {
 	rows, err := r.pool.Query(ctx,
 		`SELECT id, session_exercise_id, reps, weight, order_num FROM sets WHERE session_exercise_id = $1 ORDER BY order_num`,
 		sessionExerciseID)
@@ -47,21 +47,21 @@ func (r *SetRepository) ListBySessionExerciseID(ctx context.Context, sessionExer
 	return result, rows.Err()
 }
 
-func (r *SetRepository) Create(ctx context.Context, set *domain.Set) error {
+func (r *SetRepository) CreateSet(ctx context.Context, set *domain.Set) error {
 	_, err := r.pool.Exec(ctx,
 		`INSERT INTO sets (id, session_exercise_id, reps, weight, order_num) VALUES ($1, $2, $3, $4, $5)`,
 		set.ID, set.SessionExerciseID, set.Reps, set.Weight, set.OrderNum)
 	return err
 }
 
-func (r *SetRepository) Update(ctx context.Context, set *domain.Set) error {
+func (r *SetRepository) UpdateSet(ctx context.Context, set *domain.Set) error {
 	_, err := r.pool.Exec(ctx,
 		`UPDATE sets SET reps = $1, weight = $2, order_num = $3 WHERE id = $4`,
 		set.Reps, set.Weight, set.OrderNum, set.ID)
 	return err
 }
 
-func (r *SetRepository) Delete(ctx context.Context, id uuid.UUID) error {
+func (r *SetRepository) DeleteSet(ctx context.Context, id uuid.UUID) error {
 	_, err := r.pool.Exec(ctx, `DELETE FROM sets WHERE id = $1`, id)
 	return err
 }

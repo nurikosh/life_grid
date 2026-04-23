@@ -16,7 +16,7 @@ func NewTemplateRepository(pool *pgxpool.Pool) *TemplateRepository {
 	return &TemplateRepository{pool: pool}
 }
 
-func (r *TemplateRepository) GetByID(ctx context.Context, id uuid.UUID) (*domain.Template, error) {
+func (r *TemplateRepository) GetTemplateByID(ctx context.Context, id uuid.UUID) (*domain.Template, error) {
 	row := r.pool.QueryRow(ctx,
 		`SELECT id, user_id, name, notes, created_at FROM templates WHERE id = $1`, id)
 
@@ -27,7 +27,7 @@ func (r *TemplateRepository) GetByID(ctx context.Context, id uuid.UUID) (*domain
 	return t, nil
 }
 
-func (r *TemplateRepository) ListByUserID(ctx context.Context, userID uuid.UUID) ([]*domain.Template, error) {
+func (r *TemplateRepository) ListTemplatesByUserID(ctx context.Context, userID uuid.UUID) ([]*domain.Template, error) {
 	rows, err := r.pool.Query(ctx,
 		`SELECT id, user_id, name, notes, created_at FROM templates WHERE user_id = $1`, userID)
 	if err != nil {
@@ -46,21 +46,21 @@ func (r *TemplateRepository) ListByUserID(ctx context.Context, userID uuid.UUID)
 	return result, rows.Err()
 }
 
-func (r *TemplateRepository) Create(ctx context.Context, template *domain.Template) error {
+func (r *TemplateRepository) CreateTemplate(ctx context.Context, template *domain.Template) error {
 	_, err := r.pool.Exec(ctx,
 		`INSERT INTO templates (id, user_id, name, notes, created_at) VALUES ($1, $2, $3, $4, $5)`,
 		template.ID, template.UserID, template.Name, template.Notes, template.CreatedAt)
 	return err
 }
 
-func (r *TemplateRepository) Update(ctx context.Context, template *domain.Template) error {
+func (r *TemplateRepository) UpdateTemplate(ctx context.Context, template *domain.Template) error {
 	_, err := r.pool.Exec(ctx,
 		`UPDATE templates SET name = $1, notes = $2 WHERE id = $3`,
 		template.Name, template.Notes, template.ID)
 	return err
 }
 
-func (r *TemplateRepository) Delete(ctx context.Context, id uuid.UUID) error {
+func (r *TemplateRepository) DeleteTemplate(ctx context.Context, id uuid.UUID) error {
 	_, err := r.pool.Exec(ctx, `DELETE FROM templates WHERE id = $1`, id)
 	return err
 }
@@ -75,7 +75,7 @@ func NewTemplateExerciseRepository(pool *pgxpool.Pool) *TemplateExerciseReposito
 	return &TemplateExerciseRepository{pool: pool}
 }
 
-func (r *TemplateExerciseRepository) GetByID(ctx context.Context, id uuid.UUID) (*domain.TemplateExercise, error) {
+func (r *TemplateExerciseRepository) GetTemplateExerciseByID(ctx context.Context, id uuid.UUID) (*domain.TemplateExercise, error) {
 	row := r.pool.QueryRow(ctx,
 		`SELECT id, template_id, exercise_id, order_index, target_sets, target_reps, target_weight
 		 FROM template_exercises WHERE id = $1`, id)
@@ -88,7 +88,7 @@ func (r *TemplateExerciseRepository) GetByID(ctx context.Context, id uuid.UUID) 
 	return te, nil
 }
 
-func (r *TemplateExerciseRepository) ListByTemplateID(ctx context.Context, templateID uuid.UUID) ([]*domain.TemplateExercise, error) {
+func (r *TemplateExerciseRepository) ListTemplateExercisesByTemplateID(ctx context.Context, templateID uuid.UUID) ([]*domain.TemplateExercise, error) {
 	rows, err := r.pool.Query(ctx,
 		`SELECT id, template_id, exercise_id, order_index, target_sets, target_reps, target_weight
 		 FROM template_exercises WHERE template_id = $1 ORDER BY order_index`, templateID)
@@ -109,7 +109,7 @@ func (r *TemplateExerciseRepository) ListByTemplateID(ctx context.Context, templ
 	return result, rows.Err()
 }
 
-func (r *TemplateExerciseRepository) Create(ctx context.Context, te *domain.TemplateExercise) error {
+func (r *TemplateExerciseRepository) CreateTemplateExercise(ctx context.Context, te *domain.TemplateExercise) error {
 	_, err := r.pool.Exec(ctx,
 		`INSERT INTO template_exercises (id, template_id, exercise_id, order_index, target_sets, target_reps, target_weight)
 		 VALUES ($1, $2, $3, $4, $5, $6, $7)`,
@@ -117,14 +117,14 @@ func (r *TemplateExerciseRepository) Create(ctx context.Context, te *domain.Temp
 	return err
 }
 
-func (r *TemplateExerciseRepository) Update(ctx context.Context, te *domain.TemplateExercise) error {
+func (r *TemplateExerciseRepository) UpdateTemplateExercise(ctx context.Context, te *domain.TemplateExercise) error {
 	_, err := r.pool.Exec(ctx,
 		`UPDATE template_exercises SET order_index = $1, target_sets = $2, target_reps = $3, target_weight = $4 WHERE id = $5`,
 		te.OrderIndex, te.TargetSets, te.TargetReps, te.TargetWeight, te.ID)
 	return err
 }
 
-func (r *TemplateExerciseRepository) Delete(ctx context.Context, id uuid.UUID) error {
+func (r *TemplateExerciseRepository) DeleteTemplateExercise(ctx context.Context, id uuid.UUID) error {
 	_, err := r.pool.Exec(ctx, `DELETE FROM template_exercises WHERE id = $1`, id)
 	return err
 }

@@ -14,6 +14,20 @@ type SessionExercise struct {
 	Sets       []Set
 }
 
+func NewSessionExercise(sessionID, exerciseID uuid.UUID) (*SessionExercise, error) {
+	if sessionID == uuid.Nil {
+		return nil, ErrSessionIDRequired
+	}
+	if exerciseID == uuid.Nil {
+		return nil, ErrExerciseIDRequired
+	}
+	return &SessionExercise{
+		ID:         uuid.New(),
+		SessionID:  sessionID,
+		ExerciseID: exerciseID,
+	}, nil
+}
+
 func (se *SessionExercise) TotalVolume() float64 {
 	var total float64
 	for _, s := range se.Sets {
@@ -23,8 +37,8 @@ func (se *SessionExercise) TotalVolume() float64 {
 }
 
 type SessionExerciseRepository interface {
-	GetByID(ctx context.Context, id uuid.UUID) (*SessionExercise, error)
-	ListBySessionID(ctx context.Context, sessionID uuid.UUID) ([]*SessionExercise, error)
-	Create(ctx context.Context, sessionExercise *SessionExercise) error
-	Delete(ctx context.Context, id uuid.UUID) error
+	GetSessionExerciseByID(ctx context.Context, id uuid.UUID) (*SessionExercise, error)
+	ListSessionExercisesBySessionID(ctx context.Context, sessionID uuid.UUID) ([]*SessionExercise, error)
+	CreateSessionExercise(ctx context.Context, sessionExercise *SessionExercise) error
+	DeleteSessionExercise(ctx context.Context, id uuid.UUID) error
 }

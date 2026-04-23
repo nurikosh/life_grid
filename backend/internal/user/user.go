@@ -1,11 +1,11 @@
-package gym
+package user
 
 import (
 	"encoding/json"
 	"net/http"
 )
 
-// Common helpers for handlers.
+// Common helpers for user handlers.
 func SendJSON(w http.ResponseWriter, code int, data any) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(code)

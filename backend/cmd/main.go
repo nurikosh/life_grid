@@ -19,6 +19,10 @@ func main() {
 	if err != nil {
 		log.Fatal("Failed to create a connection pool, error: ", err)
 	}
+	defer connPool.Close()
+	log.Println("Successfully connected to the database!!")
+
+	// initialize repositories
 
 	// gym repositories
 	var exerciseRepo domain.ExerciseRepository = exercises.NewExerciseRepository(connPool)

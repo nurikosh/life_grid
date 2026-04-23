@@ -16,7 +16,7 @@ func NewSessionRepository(pool *pgxpool.Pool) *SessionRepository {
 	return &SessionRepository{pool: pool}
 }
 
-func (r *SessionRepository) GetByID(ctx context.Context, id uuid.UUID) (*domain.Session, error) {
+func (r *SessionRepository) GetSessionByID(ctx context.Context, id uuid.UUID) (*domain.Session, error) {
 	row := r.pool.QueryRow(ctx,
 		`SELECT id, user_id, name, created_at, ended_at FROM sessions WHERE id = $1`, id)
 
@@ -27,7 +27,7 @@ func (r *SessionRepository) GetByID(ctx context.Context, id uuid.UUID) (*domain.
 	return s, nil
 }
 
-func (r *SessionRepository) ListByUserID(ctx context.Context, userID uuid.UUID) ([]*domain.Session, error) {
+func (r *SessionRepository) ListSessionsByUserID(ctx context.Context, userID uuid.UUID) ([]*domain.Session, error) {
 	rows, err := r.pool.Query(ctx,
 		`SELECT id, user_id, name, created_at, ended_at FROM sessions WHERE user_id = $1`, userID)
 	if err != nil {
@@ -46,21 +46,21 @@ func (r *SessionRepository) ListByUserID(ctx context.Context, userID uuid.UUID) 
 	return result, rows.Err()
 }
 
-func (r *SessionRepository) Create(ctx context.Context, session *domain.Session) error {
+func (r *SessionRepository) CreateSession(ctx context.Context, session *domain.Session) error {
 	_, err := r.pool.Exec(ctx,
 		`INSERT INTO sessions (id, user_id, name, created_at, ended_at) VALUES ($1, $2, $3, $4, $5)`,
 		session.ID, session.UserID, session.Name, session.CreatedAt, session.EndedAt)
 	return err
 }
 
-func (r *SessionRepository) Update(ctx context.Context, session *domain.Session) error {
+func (r *SessionRepository) UpdateSession(ctx context.Context, session *domain.Session) error {
 	_, err := r.pool.Exec(ctx,
 		`UPDATE sessions SET name = $1, ended_at = $2 WHERE id = $3`,
 		session.Name, session.EndedAt, session.ID)
 	return err
 }
 
-func (r *SessionRepository) Delete(ctx context.Context, id uuid.UUID) error {
+func (r *SessionRepository) DeleteSession(ctx context.Context, id uuid.UUID) error {
 	_, err := r.pool.Exec(ctx, `DELETE FROM sessions WHERE id = $1`, id)
 	return err
 }

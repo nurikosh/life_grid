@@ -16,7 +16,7 @@ func NewSessionExerciseRepository(pool *pgxpool.Pool) *SessionExerciseRepository
 	return &SessionExerciseRepository{pool: pool}
 }
 
-func (r *SessionExerciseRepository) GetByID(ctx context.Context, id uuid.UUID) (*domain.SessionExercise, error) {
+func (r *SessionExerciseRepository) GetSessionExerciseByID(ctx context.Context, id uuid.UUID) (*domain.SessionExercise, error) {
 	row := r.pool.QueryRow(ctx,
 		`SELECT id, exercise_id, session_id FROM session_exercises WHERE id = $1`, id)
 
@@ -27,7 +27,7 @@ func (r *SessionExerciseRepository) GetByID(ctx context.Context, id uuid.UUID) (
 	return se, nil
 }
 
-func (r *SessionExerciseRepository) ListBySessionID(ctx context.Context, sessionID uuid.UUID) ([]*domain.SessionExercise, error) {
+func (r *SessionExerciseRepository) ListSessionExercisesBySessionID(ctx context.Context, sessionID uuid.UUID) ([]*domain.SessionExercise, error) {
 	rows, err := r.pool.Query(ctx,
 		`SELECT id, exercise_id, session_id FROM session_exercises WHERE session_id = $1`, sessionID)
 	if err != nil {
@@ -46,14 +46,14 @@ func (r *SessionExerciseRepository) ListBySessionID(ctx context.Context, session
 	return result, rows.Err()
 }
 
-func (r *SessionExerciseRepository) Create(ctx context.Context, sessionExercise *domain.SessionExercise) error {
+func (r *SessionExerciseRepository) CreateSessionExercise(ctx context.Context, sessionExercise *domain.SessionExercise) error {
 	_, err := r.pool.Exec(ctx,
 		`INSERT INTO session_exercises (id, exercise_id, session_id) VALUES ($1, $2, $3)`,
 		sessionExercise.ID, sessionExercise.ExerciseID, sessionExercise.SessionID)
 	return err
 }
 
-func (r *SessionExerciseRepository) Delete(ctx context.Context, id uuid.UUID) error {
+func (r *SessionExerciseRepository) DeleteSessionExercise(ctx context.Context, id uuid.UUID) error {
 	_, err := r.pool.Exec(ctx, `DELETE FROM session_exercises WHERE id = $1`, id)
 	return err
 }
