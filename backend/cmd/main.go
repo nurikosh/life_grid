@@ -1,42 +1,43 @@
 package main
 
 import (
-	"life_grid/internal/gym/domain"
-	"life_grid/internal/gym/exercises"
-	"life_grid/internal/gym/session_exercises"
-	"life_grid/internal/gym/sessions"
-	"life_grid/internal/gym/sets"
-	"life_grid/internal/gym/templates"
-	"life_grid/internal/shared"
+	"context"
+	"gym/internal/app"
+	"gym/internal/config"
+	"gym/internal/infra/postgres"
 	"log"
+	"net/http"
+
+	"github.com/joho/godotenv"
 )
 
 func main() {
-
-	dbConfig := shared.Config()
-
-	connPool, err := shared.NewDBPool(dbConfig)
-	if err != nil {
-		log.Fatal("Failed to create a connection pool, error: ", err)
+	if err := godotenv.Load(); err != nil {
+		log.Printf("no .env loaded: %v", err)
 	}
-	defer connPool.Close()
-	log.Println("Successfully connected to the database!!")
 
-	// initialize repositories
+	cfg, err := config.Load()
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	// gym repositories
-	var exerciseRepo domain.ExerciseRepository = exercises.NewExerciseRepository(connPool)
-	var sessionRepo domain.SessionRepository = sessions.NewSessionRepository(connPool)
-	var sessionExerciseRepo domain.SessionExerciseRepository = session_exercises.NewSessionExerciseRepository(connPool)
-	var setRepo domain.SetRepository = sets.NewSetRepository(connPool)
-	var templateRepo domain.TemplateRepository = templates.NewTemplateRepository(connPool)
-	var templateExerciseRepo domain.TemplateExerciseRepository = templates.NewTemplateExerciseRepository(connPool)
+	err = postgres.RunMigrations(cfg.DatabaseURL)
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	_ = exerciseRepo
-	_ = sessionRepo
-	_ = sessionExerciseRepo
-	_ = setRepo
-	_ = templateRepo
-	_ = templateExerciseRepo
+	pool, err := postgres.NewPool(context.Background(), cfg.DatabaseURL)
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Println("connected to database")
+	defer pool.Close()
+
+	application := app.New(pool)
+
+	log.Printf("server starting on %s", cfg.Port)
+	if err := http.ListenAndServe(cfg.Port, application.Router); err != nil {
+		log.Fatal(err)
+	}
 
 }

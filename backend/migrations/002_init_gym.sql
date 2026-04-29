@@ -1,12 +1,13 @@
+-- +goose Up
+-- +goose statementbegin
 CREATE SCHEMA IF NOT EXISTS gym;
-
 
 -- general exercises
 CREATE TABLE IF NOT EXISTS gym.exercises (
     id UUID PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
-    description TEXT,
-    muscle_group VARCHAR(255)
+    muscle_group VARCHAR(255),
+    description TEXT
 );
 
 -- gym sessions
@@ -53,3 +54,4 @@ CREATE TABLE IF NOT EXISTS gym.template_exercises (
     target_reps   INTEGER,
     target_weight FLOAT
 );
+-- +goose statementend
