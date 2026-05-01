@@ -5,6 +5,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/go-chi/cors"
 )
 
 type Handlers struct {
@@ -16,6 +17,11 @@ func NewRouter(h *Handlers) http.Handler {
 
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.Logger)
+	r.Use(cors.Handler(cors.Options{
+		AllowedOrigins: []string{"http://localhost:5173"},
+		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowedHeaders: []string{"Content-Type", "Authorization"},
+	}))
 
 	r.Route("/exercises", func(r chi.Router) {
 		r.Post("/", h.Exercise.CreateExercise)
