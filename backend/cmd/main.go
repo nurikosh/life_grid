@@ -7,14 +7,9 @@ import (
 	"gym/internal/infra/postgres"
 	"log"
 	"net/http"
-
-	"github.com/joho/godotenv"
 )
 
 func main() {
-	if err := godotenv.Load(); err != nil {
-		log.Printf("no .env loaded: %v", err)
-	}
 
 	cfg, err := config.Load()
 	if err != nil {

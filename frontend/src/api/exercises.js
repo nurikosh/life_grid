@@ -1,4 +1,4 @@
-const BASE = '/api'
+const BASE = import.meta.env.VITE_API_URL || 'http://localhost:8080'
 
 async function handleResponse(response) {
   if (!response.ok) {
@@ -9,7 +9,7 @@ async function handleResponse(response) {
 }
 
 export async function listExercises() {
-    const res = fetch(`${BASE}/exercises`)
+    const res = await fetch(`${BASE}/exercises`)
     return handleResponse(res)
 }
 

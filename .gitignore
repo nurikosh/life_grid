@@ -1,2 +1,39 @@
-*.exe
+# Environment & secrets
 .env
+.env.local
+.env.production
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Go
+backend/main
+backend/tmp/
+backend/uploads/*
+
+# Node / Frontend
+node_modules/
+frontend/dist/
+frontend/.vite/
+admin/dist/
+admin/.vite/
+admin/node_modules/
+
+# Docker
+docker-compose.override.yml
+
+# Logs
+*.log
+
+# Build artifacts
+*.exe
+*.out

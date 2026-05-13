@@ -12,8 +12,8 @@ type Config struct {
 }
 
 func Load() (*Config, error) {
-	databaseURL, ok := os.LookupEnv("DATABASE_URL")
-	if !ok || databaseURL == "" {
+	databaseURL := os.Getenv("DATABASE_URL")
+	if databaseURL == "" {
 		return nil, fmt.Errorf("DATABASE_URL is required")
 	}
 

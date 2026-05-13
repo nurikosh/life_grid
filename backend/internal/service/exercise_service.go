@@ -13,9 +13,9 @@ type exerciseService struct {
 }
 
 type ExerciseInput struct {
-	Name        string
-	MuscleGroup string
-	Description string
+	Name        string `json:"name"`
+	MuscleGroup string `json:"muscle_group"`
+	Description string `json:"description"`
 }
 
 type ExerciseService interface {

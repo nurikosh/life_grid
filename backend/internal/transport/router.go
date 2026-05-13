@@ -18,7 +18,10 @@ func NewRouter(h *Handlers) http.Handler {
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.Logger)
 	r.Use(cors.Handler(cors.Options{
-		AllowedOrigins: []string{"http://localhost:5173"},
+		AllowedOrigins: []string{
+			"http://localhost:5173",
+			"http://localhost",
+		},
 		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowedHeaders: []string{"Content-Type", "Authorization"},
 	}))
